@@ -1,10 +1,10 @@
 const path = require('path');
 const express = require('express');
 const axios = require('axios');
-const proxyServer = express();
 
-const reservationServiceDomain = 'http://localhost:3002';
-const reviewsServiceDomain = 'http://localhost:3001';
+const DOMAINS = require('../constants/DOMAINS')
+
+const proxyServer = express();
 
 const redirectRequest = ({ originalUrl, headers, method, params, data }, domain) => (
     axios({
@@ -24,7 +24,8 @@ proxyServer.use(express.static(
 ));
 
 proxyServer.use('/api/reservations', (req, res) => {
-    redirectRequest(req, reservationServiceDomain)
+    const reservations = { DOMAINS };
+    redirectRequest(req, reservations)
         .then(({ data }) => {
             res.send(data);
         })
@@ -32,7 +33,8 @@ proxyServer.use('/api/reservations', (req, res) => {
 });
 
 proxyServer.use('/api/reviews', (req, res) => {
-    redirectRequest(req, reviewsServiceDomain)
+    const reviews = { DOMAINS };
+    redirectRequest(req, reviews)
         .then(({ data }) => {
             res.send(data);
         })
