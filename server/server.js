@@ -1,23 +1,10 @@
 const path = require('path');
 const express = require('express');
-const axios = require('axios');
+const redirectRequest = require('../utils/redirectRequest');
 
 const DOMAINS = require('../constants/DOMAINS')
 
 const proxyServer = express();
-
-const redirectRequest = ({ originalUrl, headers, method, params, data }, domain) => (
-    axios({
-        url: `${domain}${originalUrl}`,
-        params,
-        method,
-        data,
-        headers: {
-            ...headers,
-            'Cache-Control': 'no-cache',
-        },
-    })
-);
 
 proxyServer.use(express.static(
     path.resolve(__dirname, '..', 'public'),
