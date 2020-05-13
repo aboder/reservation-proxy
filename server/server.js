@@ -1,26 +1,29 @@
 const path = require('path');
 const express = require('express');
+const axios = require('axios');
+
 const redirectRequest = require('../utils/redirectRequest');
+const template = require('../utils/template');
 
 const DOMAINS = require('../constants/DOMAINS');
 
 const proxyServer = express();
 
-proxyServer.use('/*bundle.js', (req, res) => {
-  const { service } = req.originalUrl.match(/\/(?<service>.+)bundle.js/i).groups;
-  redirectRequest(req, DOMAINS[service])
-    .then(({ data }) => {
-      res.send(data);
+proxyServer.use(express.static(
+  path.resolve(__dirname, '..', 'public'),
+));
+
+proxyServer.get('/:roomId$', (req, res) => {
+  const { roomId } = req.params;
+  axios(`http://localhost:3002/${roomId}`)
+    .then(({ rendered, preloadedState }) => {
+      res.send(template(rendered, preloadedState));
     })
     .catch((reason) => {
       console.log(reason);
       res.status(500).send();
     });
 });
-
-proxyServer.use(express.static(
-  path.resolve(__dirname, '..', 'public'),
-));
 
 proxyServer.use('/api/reservations', (req, res) => {
   const { reservations } = DOMAINS;
