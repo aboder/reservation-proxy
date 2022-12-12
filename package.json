@@ -20,7 +20,7 @@
   "homepage": "https://github.com/Air-Tree-n-Tree/reservation-proxy#readme",
   "dependencies": {
     "axios": "^0.19.2",
-    "express": "^4.17.1"
+    "express": "^4.17.3"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
